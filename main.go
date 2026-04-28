@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"time"
 )
@@ -60,13 +61,20 @@ func main() {
 
 	myReader := csv.NewReader(file)
 
-	record, readError := myReader.Read()
+	myReader.Read()
 
-	if readError != nil {
-		fmt.Println("It was impossible to read the file", readError)
-		return
+	for {
+		record, errorRead := myReader.Read()
+
+		if errorRead == io.EOF {
+			break
+		}
+
+		if errorRead != nil {
+			fmt.Println("An error had occurred.", errorRead)
+			return
+		}
+
+		fmt.Println(record)
 	}
-
-	fmt.Println(record)
-
 }
