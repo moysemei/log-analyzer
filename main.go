@@ -65,15 +65,20 @@ func main() {
 
 	for {
 		record, errorRead := myReader.Read()
-
 		if errorRead == io.EOF {
 			break
 		}
-
 		if errorRead != nil {
 			fmt.Println("An error had occurred.", errorRead)
 			return
 		}
+		recordCoverted, parseError := time.Parse(time.RFC3339, record[0])
+		if parseError != nil {
+			fmt.Println("The date is invalid", parseError)
+			continue
+		}
+
+		if recordCoverted 
 
 		fmt.Println(record)
 	}
