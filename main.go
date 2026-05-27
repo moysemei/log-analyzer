@@ -78,8 +78,8 @@ func main() {
 			continue
 		}
 
-		if recordCoverted 
-
-		fmt.Println(record)
+		if firstDateConverted.Before(finalDateConverted) {
+			fmt.Println(recordCoverted)
+		}
 	}
 }
