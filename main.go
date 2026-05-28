@@ -42,6 +42,8 @@ func main() {
 		return
 	}
 
+	finalDateConverted = finalDateConverted.AddDate(0, 0, 1)
+
 	if firstDateConverted.After(finalDateConverted) {
 		fmt.Println("The interval of dates are invalid.")
 		return
@@ -60,6 +62,7 @@ func main() {
 	defer file.Close()
 
 	myReader := csv.NewReader(file)
+	myReader.Comma = ';'
 
 	myReader.Read()
 
@@ -78,8 +81,8 @@ func main() {
 			continue
 		}
 
-		if firstDateConverted.Before(finalDateConverted) {
-			fmt.Println(recordCoverted)
+		if !recordCoverted.Before(firstDateConverted) && !recordCoverted.After(finalDateConverted) {
+			fmt.Println(record)
 		}
 	}
 }
