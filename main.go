@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+type Transaction struct {
+	transactionID, status string
+	timestamp             time.Time
+	amount                float64
+}
+
 func main() {
 	fileFlag := flag.String("file", "", "Choose your file")
 	fromDateFlag := flag.String("from", "", "Enter a valid start date")
