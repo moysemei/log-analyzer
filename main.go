@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -90,5 +91,12 @@ func main() {
 		if !recordCoverted.Before(firstDateConverted) && !recordCoverted.After(finalDateConverted) {
 			fmt.Println(record)
 		}
+
+		f, err := strconv.ParseFloat(record[2], 64)
+		if err != nil {
+			fmt.Println("Invalid number.", err)
+			continue
+		}
+		fmt.Println(f)
 	}
 }
