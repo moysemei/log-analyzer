@@ -89,14 +89,13 @@ func main() {
 		}
 
 		if !recordCoverted.Before(firstDateConverted) && !recordCoverted.After(finalDateConverted) {
-			fmt.Println(record)
-		}
+			f, err := strconv.ParseFloat(record[2], 64)
 
-		f, err := strconv.ParseFloat(record[2], 64)
-		if err != nil {
-			fmt.Println("Invalid number.", err)
-			continue
+			if err != nil {
+				fmt.Println("Invalid number.", err)
+				continue
+			}
+			fmt.Println(f)
 		}
-		fmt.Println(f)
 	}
 }
