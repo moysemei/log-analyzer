@@ -90,12 +90,17 @@ func main() {
 
 		if !recordCoverted.Before(firstDateConverted) && !recordCoverted.After(finalDateConverted) {
 			f, err := strconv.ParseFloat(record[2], 64)
-
 			if err != nil {
 				fmt.Println("Invalid number.", err)
 				continue
 			}
-			fmt.Println(f)
+			tx := Transaction{
+				timestamp:     recordCoverted,
+				transactionID: record[1],
+				amount:        f,
+				status:        record[3],
+			}
+			fmt.Println(tx)
 		}
 	}
 }
