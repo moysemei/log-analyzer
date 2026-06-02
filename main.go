@@ -73,6 +73,9 @@ func main() {
 
 	myReader.Read()
 
+	totalApproved := 0.0
+	totalDenied := 0
+
 	for {
 		record, errorRead := myReader.Read()
 		if errorRead == io.EOF {
@@ -100,7 +103,14 @@ func main() {
 				amount:        f,
 				status:        record[3],
 			}
-			fmt.Println(tx)
+
+			if tx.status == "approved" {
+				totalApproved += tx.amount
+			} else {
+				totalDenied++
+			}
 		}
 	}
+	fmt.Println("Total Approved: ", totalApproved)
+	fmt.Println("Total Denied: ", totalDenied)
 }
