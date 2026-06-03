@@ -16,6 +16,40 @@ type Transaction struct {
 	amount                float64
 }
 
+var totalApproved = 0.0
+var totalDenied = 0
+
+func worker(roller chan []string, start time.Time, end time.Time) {
+	for line := range roller {
+		recordCoverted, parseError := time.Parse(time.RFC3339, line[0])
+		if parseError != nil {
+			fmt.Println("The date is invalid", parseError)
+			continue
+		}
+		if !recordCoverted.Before(start) && !recordCoverted.After(end) {
+			f, err := strconv.ParseFloat(line[2], 64)
+			if err != nil {
+				fmt.Println("Invalid number.", err)
+				continue
+			}
+			tx := Transaction{
+				timestamp:     recordCoverted,
+				transactionID: line[1],
+				amount:        f,
+				status:        line[3],
+			}
+
+			if tx.status == "approved" {
+				totalApproved += tx.amount
+			} else {
+				totalDenied++
+			}
+		}
+	}
+	fmt.Println("Total Approved: ", totalApproved)
+	fmt.Println("Total Denied: ", totalDenied)
+}
+
 func main() {
 	fileFlag := flag.String("file", "", "Choose your file")
 	fromDateFlag := flag.String("from", "", "Enter a valid start date")
@@ -73,8 +107,8 @@ func main() {
 
 	myReader.Read()
 
-	totalApproved := 0.0
-	totalDenied := 0
+	c := make(chan []string)
+	go worker(c, firstDateConverted, finalDateConverted)
 
 	for {
 		record, errorRead := myReader.Read()
@@ -85,32 +119,8 @@ func main() {
 			fmt.Println("An error had occurred.", errorRead)
 			return
 		}
-		recordCoverted, parseError := time.Parse(time.RFC3339, record[0])
-		if parseError != nil {
-			fmt.Println("The date is invalid", parseError)
-			continue
-		}
 
-		if !recordCoverted.Before(firstDateConverted) && !recordCoverted.After(finalDateConverted) {
-			f, err := strconv.ParseFloat(record[2], 64)
-			if err != nil {
-				fmt.Println("Invalid number.", err)
-				continue
-			}
-			tx := Transaction{
-				timestamp:     recordCoverted,
-				transactionID: record[1],
-				amount:        f,
-				status:        record[3],
-			}
-
-			if tx.status == "approved" {
-				totalApproved += tx.amount
-			} else {
-				totalDenied++
-			}
-		}
+		c <- record
 	}
-	fmt.Println("Total Approved: ", totalApproved)
-	fmt.Println("Total Denied: ", totalDenied)
+	close(c)
 }
